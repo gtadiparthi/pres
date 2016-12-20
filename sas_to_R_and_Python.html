@@ -1,0 +1,264 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<meta name = "description" content = "Python sklearn intro">
+		<meta name = "author" content = "Gopalakrishna Tadiparthi">
+
+		<title>SAS to R and Python</title>
+
+		<link rel="stylesheet" href="css/theme/gtadiparthi.css" id = "theme">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<h2> Translating SAS to R and Python </h2>
+					
+					<br>
+					by Gopalakrishna Tadiparthi
+					<br> <br>
+					<small> (Equivalent code snippets in SAS, R, and Python) </small>
+				</section>
+
+				<section>
+					<h2> Motivation </h2>
+					<ul>
+						<li>Many organizations are migrating to open source systems </li>
+						<li> There is a need to rewrite legacy SAS code</li>
+						<li> This presentation presents SAS code and its equivalent R and Python code to help you get started </li>
+						<li> Note that this presentation is no substitute for a basic training in R or Python </li>
+						
+					</ul>
+					
+				</section>
+			<section>
+					<h2> Structure of this presentation </h2>
+					
+					<ul>
+						<li> Each section of this presentation will contain the following
+						 <ol>
+						<li>a statement describing the programming question </li>
+						
+						<li> SAS solution </li>
+						
+						<li> Equivalent R code</li>
+						<li> Equivalent Python code</li>
+						</ol>
+						
+					<li> There may be many solutions. This presentation focuses on the most natural way a SAS programmer would solve the problem </li>
+					</ul>
+				</section>
+<section>
+<h4> Copy and paste the following into your editor </h4>
+<div style ="width: 100%; height:400%; position: absolute; top: -100%; left: -55%;z-index:-1;">
+</div>
+<div>
+	<div style ="width: 30%; display: inline-block; margin-right: 5%; vertical-align: top;">
+	<p style = "text-align: right;">
+	Import the libraries 
+	</p>
+	</div>
+	<div style = "width: 60%; display: inline-block;">
+		<pre><code class="hljs" data-trim contentnoteditable >
+import numpy as np
+import pandas as pd
+</code></pre>
+						</div>
+					</div>
+<div class = "fragment" style = "margin: 50px 0px;">
+	<div style ="width: 30%; display: inline-block; margin-right: 5%; vertical-align:top;">
+	<p style = "text-align: right;">
+	Read the csv file 
+	</p>
+	</div>
+	<div style = "width: 60%; display: inline-block;">
+		<pre><code class="hljs" data-trim contenteditable >
+data = pd.read_csv("iris.csv",index_col = 0)
+			</code></pre>
+	</div>
+</div>
+<div class = "fragment" style = "margin: 50px 0px;">
+	<div style ="width: 30%; display: inline-block; margin-right: 5%; vertical-align:top;">
+	<p style = "text-align: right;">
+	Display the contents 
+	</p>
+	</div>
+	<div style = "width: 60%; display: inline-block;">
+		<pre><code class="hljs" data-trim contenteditable >
+print(data.head())
+print(data.info())
+print(data.shape)
+			</code></pre>
+	</div>
+</div>
+</section>
+
+<section>
+	<h2> Feature and response should be </h2>
+	<ul>
+		<li> separate objects </li>
+		<li> numeric </li>
+		<li> Numpy arrays (ndarray optimized for computation) </li>
+		<li> specific shapes</li>
+		<ul>
+			<li>the feature should have the following dimensions: no. of observations x no. of features</li>
+			<li> the length of response array should be no. of observations </li>
+		</ul>
+	</ul>
+	
+</section>
+
+<section>
+<h4> Copy and paste the following into your editor </h4>
+<div style ="width: 100%; height:400%; position: absolute; top: -100%; left: -55%;z-index:-1;">
+</div>
+<div>
+	<div style ="width: 30%; display: inline-block; margin-right: 5%; vertical-align: top;">
+	<p style = "text-align: right;">
+	Separate objects 
+	</p>
+	</div>
+	<div style = "width: 60%; display: inline-block;">
+		<pre><code class="hljs" data-trim contentnoteditable >
+iris_feature_names = ['Sepal.Length','Sepal.Width', 'Petal.Length','Petal.Width']
+iris_features = np.array(data[iris_feature_names])
+</code></pre>
+						</div>
+					</div>
+<div class = "fragment" style = "margin: 50px 0px;">
+	<div style ="width: 30%; display: inline-block; margin-right: 5%; vertical-align:top;">
+	<p style = "text-align: right;">
+	Convert target values to numeric
+	</p>
+	</div>
+	<div style = "width: 60%; display: inline-block;">
+		<pre><code class="hljs" data-trim contenteditable >
+from sklearn import preprocessing
+le = preprocessing.LabelEncoder()
+le.fit(data.Species)
+iris_target_names = list(le.classes_)
+print(iris_target_names)
+iris_target = np.array(le.transform(data.Species))</code></pre>
+	</div>
+</div>
+<div class = "fragment" style = "margin: 50px 0px;">
+	<div style ="width: 30%; display: inline-block; margin-right: 5%; vertical-align:top;">
+	<p style = "text-align: right;">
+	Ensure that are all numeric and check on shape
+	</p>
+	</div>
+	<div style = "width: 60%; display: inline-block;">
+		<pre><code class="hljs" data-trim contenteditable >
+print(type(iris_features))
+print(type(iris_target))
+X = iris_features
+y = iris_target
+print(X.shape)
+print(y.shape)</code></pre>
+	</div>
+</div>
+</section>
+<section>
+<h2> Follow the 4 steps for training and prediction </h2>
+	<ol>
+		<li> Import the class (ml technique) you plan to use </li>
+		<li> Instantiate the estimator </li>
+		<li> Fit the model with data</li>
+		<li> Predict the response for a new observation</li>
+	</ol>
+
+</section>
+<section>
+
+<div style ="width: 100%; height:400%; position: absolute; top: -100%; left: -55%;z-index:-1;">
+</div>
+<div>
+	<div style ="width: 30%; display: inline-block; margin-right: 5%; vertical-align: top;">
+	<p style = "text-align: right;">
+	Import the class
+	</p>
+	</div>
+	<div style = "width: 60%; display: inline-block;">
+		<pre><code class="hljs" data-trim contentnoteditable >
+from sklearn.neighbors import KNeighborsClassifier
+</code></pre>
+						</div>
+					</div>
+<div class = "fragment" style = "margin: 50px 0px;">
+	<div style ="width: 30%; display: inline-block; margin-right: 5%; vertical-align:top;">
+	<p style = "text-align: right;">
+	Instantiate
+	</p>
+	</div>
+	<div style = "width: 60%; display: inline-block;">
+		<pre><code class="hljs" data-trim contenteditable >
+knn = KNeighborsClassifier (n_neighbors = 1)
+print(knn)</code></pre>
+	</div>
+</div>
+<div class = "fragment" style = "margin: 50px 0px;">
+	<div style ="width: 30%; display: inline-block; margin-right: 5%; vertical-align:top;">
+	<p style = "text-align: right;">
+	Fit the model
+	</p>
+	</div>
+	<div style = "width: 60%; display: inline-block;">
+		<pre><code class="hljs" data-trim contenteditable >
+knn.fit(X,y)</code></pre>
+	</div>
+</div><div class = "fragment" style = "margin: 50px 0px;">
+	<div style ="width: 30%; display: inline-block; margin-right: 5%; vertical-align:top;">
+	<p style = "text-align: right;">
+	Predict new observation
+	</p>
+	</div>
+	<div style = "width: 60%; display: inline-block;">
+		<pre><code class="hljs" data-trim contenteditable >
+X_new = [[1,2,3,4],[5,6,7,8,]]
+result = knn.predict(X_new)
+print(le.inverse_transform(result))</code></pre>
+	</div>
+</div>
+</section>
+				
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				history: true,
+				slideNumber: true,
+				center: true,
+				progress: true,
+				controls: true,
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/search/search.js',async:true}
+				]
+			});
+			Reveal.configure({  });
+		</script>
+	</body>
+</html>
